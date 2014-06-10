@@ -1,1 +1,1 @@
-git+git://github.com/vencax/django-command-runner.git
+git+git://github.com/vencax/LeaseInfo
