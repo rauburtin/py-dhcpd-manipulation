@@ -27,7 +27,7 @@ setup(name='py-dhcpd-manipulation',
         ('bin', ['dhcpdmanip_cli.py']),
     ],
     dependency_links=['git://github.com/vencax/LeaseInfo'],
-    install_requires=['py-lease-file-parser'],
+    install_requires=[''],  # py-lease-file-parser'],
     keywords="isc linux dhcpd manipulation",
     include_package_data=True,
 )
