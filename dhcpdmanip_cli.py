@@ -13,25 +13,23 @@ import dhcpdmanip
 usage = '''\
 python %prog [action] [options]
 
-mac - mac 12 hexadigits
-ip - x.x.x.x
-name - hostnames
+action: add, remove, getleases, getreserved
 '''
 
 if __name__ == '__main__':
-    parser = OptionParser(usage=usage)
-
+    parser = OptionParser()
     parser.add_option('-m', '--mac', action='store', dest='mac',
-                      help='mac address',)
+                      help='mac address (12 hexadigits)',)
     parser.add_option('-i', '--ip', action='store', dest='ip',
-                      help='IP address',)
+                      help='IP address (x.x.x.x)',)
     parser.add_option('-H', '--host', action='store', dest='name',
                       help='host name',)
+    parser.set_usage(usage + parser.format_option_help())
 
     (options, args) = parser.parse_args()
 
-    if len(args) != 2:
-        parser.error('wrong number of arguments')
+    if len(args) != 1:
+        parser.error('wrong argument count. Action required.')
 
     logging.basicConfig(level=logging.INFO)
 
@@ -41,7 +39,7 @@ if __name__ == '__main__':
     if action == 'add':
         manipulator.add(options.name, options.mac, options.ip)
         manipulator.render()
-    elif action == 'add':
+    elif action == 'remove':
         manipulator.remove(options.mac)
         manipulator.render()
     elif action == 'getleases':
