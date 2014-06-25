@@ -1,8 +1,14 @@
 # coding=utf-8
+import re
 
 
 def add(parsed, name, mac, ip):
-    parsed[0][1][mac] = {'name': name, 'ip': ip}
+    searched = 'subnet %s.0' % '.'.join(ip.split('.')[:3])
+    for subnetinfo, hosts in parsed:
+        if re.search(searched, subnetinfo[0]):
+            hosts[mac] = {'name': name, 'ip': ip}
+            return
+    raise ValueError('Wrong IP, no subnet found')
 
 
 def remove(parsed, mac):

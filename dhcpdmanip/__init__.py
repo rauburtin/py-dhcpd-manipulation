@@ -24,7 +24,38 @@ class Manipulator(object):
         return self._leases
 
     def add(self, name, mac, ip):
-        manip.add(self._parsed, name, mac, ip)
+        manip.add(self._parsed[1], name, mac, ip)
 
     def remove(self, mac):
-        manip.remove(self._parsed, mac)
+        manip.remove(self._parsed[1], mac)
+
+    def render(self, outstream=None):
+        close = None
+        if not outstream:
+            outstream = open(self._dhcpd_conf_file, 'w')
+            close = True
+
+        for l in self._parsed[0]:
+            outstream.write(l)
+
+        for subn in self._parsed[1]:
+            self._render_subnet(subn, outstream)
+
+        if close:
+            outstream.close()
+
+    def _render_subnet(self, subn, outstream):
+        for l in subn[0]:
+            outstream.write(l)
+
+        for mac, hinfo in sorted(subn[1].items(), key=lambda i: i[1]['name']):
+            self._render_host(hinfo['name'], mac, hinfo['ip'], outstream)
+
+        outstream.write('}\n')
+
+    def _render_host(self, name, mac, ip, outstream):
+        outstream.write('\n'.join([
+            '\thost %s {' % name,
+            '\t\thardware ethernet %s;' % mac,
+            '\t\tfixed-address %s;' % ip,
+            '\t}\n']))
