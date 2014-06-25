@@ -20,11 +20,11 @@ name - hostnames
 if __name__ == '__main__':
     parser = OptionParser(usage=usage)
 
-    parser.add_option('-m', '--mac', action='store', dest='uname',
+    parser.add_option('-m', '--mac', action='store', dest='mac',
                       help='mac address',)
-    parser.add_option('-i', '--ip', action='store', dest='pwd',
+    parser.add_option('-i', '--ip', action='store', dest='ip',
                       help='IP address',)
-    parser.add_option('-h', '--host', action='store', dest='pwd',
+    parser.add_option('-H', '--host', action='store', dest='name',
                       help='host name',)
 
     (options, args) = parser.parse_args()
