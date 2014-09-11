@@ -15,7 +15,10 @@ class Manipulator(object):
             self._parsed = _dhcp_parse(f)
 
     def get_reserved(self):
-        return self._parsed
+        rv = {}
+        for r in self._parsed[1]:
+            rv.update(r[1])
+        return rv
 
     def get_leases(self):
         if not hasattr(self, '_leases'):
