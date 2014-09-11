@@ -7,6 +7,7 @@ CLI for dhcpdtools
 '''
 import sys
 import logging
+import json
 from optparse import OptionParser
 import dhcpdmanip
 
@@ -43,8 +44,8 @@ if __name__ == '__main__':
         manipulator.remove(options.mac)
         manipulator.render()
     elif action == 'getleases':
-        sys.stdout.write(manipulator.get_leases())
+        json.dump(manipulator.get_leases(), sys.stdout, indent=2)
     elif action == 'getreserved':
-        sys.stdout.write(manipulator.get_reserved())
+        json.dump(manipulator.get_reserved(), sys.stdout, indent=2)
     else:
         parser.error('Bad action')
