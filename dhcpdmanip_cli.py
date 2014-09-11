@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
 
-    action = args
+    action = args[0]
     manipulator = dhcpdmanip.Manipulator()
 
     if action == 'add':
