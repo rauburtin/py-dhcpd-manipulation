@@ -16,7 +16,7 @@ def add(parsed, name, mac, ip, desc):
             parsed[subnet]['hosts'][mac] = {
                 'name': name, 'ip': ip, 'desc': desc
             }
-    except IndexError:
+    except KeyError:
         raise ValueError('Wrong IP, no subnet found')
 
 
