@@ -10,6 +10,7 @@ import logging
 import json
 from optparse import OptionParser
 import dhcpdmanip
+import os
 
 usage = '''\
 python %prog [action] [options]
@@ -39,13 +40,19 @@ if __name__ == '__main__':
     action = args[0]
     manipulator = dhcpdmanip.Manipulator()
 
+    def _render():
+        tmp = '/tmp/dhcpd.conf.render'
+        with open(tmp, 'w') as f:
+            manipulator.render(f)
+        os.rename(tmp, manipulator._dhcpd_conf_file)
+
     if action == 'add':
         desc = getattr(object, 'desc', None)
         manipulator.add(options.name, options.mac, options.ip, desc)
-        manipulator.render()
+        _render()
     elif action == 'remove':
         manipulator.remove(options.mac)
-        manipulator.render()
+        _render()
     elif action == 'getleases':
         json.dump(manipulator.get_leases(), sys.stdout, indent=2)
     elif action == 'getreserved':
