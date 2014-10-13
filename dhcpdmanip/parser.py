@@ -2,45 +2,52 @@
 
 import re
 
-subnet_re = re.compile('subnet \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
+from . import manip
+
+subnet_re = re.compile('subnet (\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}')
 host_re = re.compile('host ([^ ]{1,}) {')
 end_re = re.compile('}\n')
 
 
 def parse(i_stream):
-    prefix, subs, curr_subnet, curr_host = [], [], None, None
+    globalinfo, subs, curr_subnet, curr_host = [], {}, None, None
+    hosts, subninfo = [], []
 
     for line in i_stream:
 
         if not curr_subnet:
             # not yet within subnet part
-            if subnet_re.search(line):
-                curr_subnet = ([line], [])
+            found = subnet_re.search(line)
+            if found:
+                curr_subnet = found.group(1)
+                subninfo.append(line)
             else:
-                prefix.append(line)
+                globalinfo.append(line)
         else:
             # already in subnet part
             end_found = end_re.search(line)
             if end_found and curr_host:
-                curr_subnet[1].append(curr_host)
+                hosts.append(curr_host)
                 curr_host = None
             elif end_found and not curr_host:
-                subs.append(curr_subnet)
+                subs[curr_subnet] = {
+                    'rawhosts': hosts, 'info': subninfo, 'hosts': {}
+                }
                 curr_subnet = None
+                hosts, subninfo = [], []
             elif not curr_host:
                 host = host_re.search(line)
                 if host:
                     curr_host = [host.group(1)]
                 else:
-                    curr_subnet[0].append(line)
+                    subninfo.append(line)
             else:
                 curr_host.append(line)
 
-    postprocessed = []
-    for s in subs:
-        postprocessed.append(_postprocess_subnet(s))
+    for s in subs.values():
+        _postprocess_subnet(subs, s)
 
-    return prefix, postprocessed
+    return globalinfo, subs
 
 
 _mac = '([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})'
@@ -63,10 +70,9 @@ def get_host(rawhost):
     return info
 
 
-def _postprocess_subnet(rawsub):
-    hosts = {}
-    for h in rawsub[1]:
+def _postprocess_subnet(parsed, rawsub):
+    for h in rawsub['rawhosts']:
         info = get_host(h)
-        hosts[info.pop('mac')] = info
+        manip.add(parsed, info['name'], info['mac'], info['ip'], info['desc'])
 
-    return rawsub[0], hosts
+    del(rawsub['rawhosts'])
