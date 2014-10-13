@@ -7,11 +7,11 @@ def add(parsed, name, mac, ip, desc):
     mac = _normalize_mac(mac)
     try:
         if not _unique_mac(parsed, mac):
-            raise ValueError('MAC already in DB')
+            raise ValueError('%s already in DB' % mac)
         elif not _unique_ip(parsed[subnet], ip):
-            raise ValueError('IP already in subnet')
+            raise ValueError('%s already in subnet' % ip)
         elif not _unique_name(parsed, name):
-            raise ValueError('Name already in DB')
+            raise ValueError('%s already in DB' % name)
         else:
             parsed[subnet]['hosts'][mac] = {
                 'name': name, 'ip': ip, 'desc': desc
