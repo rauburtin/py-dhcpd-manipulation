@@ -88,6 +88,7 @@ class Manipulator(object):
     def _render_host(self, name, mac, ip, desc, outstream):
         sep = '  '
         dsep = sep + sep
+        desc = desc or ''
         outstream.write('\n'.join([
             '%shost %s {' % (sep, name),
             '%shardware ethernet %s;' % (dsep, mac),
