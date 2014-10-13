@@ -49,16 +49,16 @@ ip_re = re.compile('fixed-address (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3});')
 
 
 def get_host(rawhost):
-    info = {'name': rawhost[0]}
+    info = {'name': rawhost[0], 'desc': ''}
 
     for l in rawhost[1:]:
         found = ip_re.search(l)
         if found:
             info['ip'] = found.group(1)
-        else:
-            found = mac_re.search(l)
-            if found:
-                info['mac'] = found.group(1)
+        elif mac_re.search(l):
+            info['mac'] = mac_re.search(l).group(1)
+        elif l.lstrip().startswith('#'):
+            info['desc'] += l.lstrip().lstrip('#').rstrip()
 
     return info
 

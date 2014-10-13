@@ -25,6 +25,8 @@ if __name__ == '__main__':
                       help='IP address (x.x.x.x)',)
     parser.add_option('-H', '--host', action='store', dest='name',
                       help='host name',)
+    parser.add_option('-d', '--desc', action='store', dest='desc',
+                      help='host name',)
     parser.set_usage(usage + parser.format_option_help())
 
     (options, args) = parser.parse_args()
@@ -38,7 +40,8 @@ if __name__ == '__main__':
     manipulator = dhcpdmanip.Manipulator()
 
     if action == 'add':
-        manipulator.add(options.name, options.mac, options.ip)
+        desc = getattr(object, 'desc', None)
+        manipulator.add(options.name, options.mac, options.ip, desc)
         manipulator.render()
     elif action == 'remove':
         manipulator.remove(options.mac)

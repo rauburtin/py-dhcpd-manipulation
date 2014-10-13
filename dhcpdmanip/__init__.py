@@ -26,8 +26,8 @@ class Manipulator(object):
                 self._leases = LeaseInfo.parse(f)
         return self._leases
 
-    def add(self, name, mac, ip):
-        manip.add(self._parsed[1], name, mac, ip)
+    def add(self, name, mac, ip, desc):
+        manip.add(self._parsed[1], name, mac, ip, desc)
 
     def remove(self, mac):
         manip.remove(self._parsed[1], mac)
@@ -52,13 +52,20 @@ class Manipulator(object):
             outstream.write(l)
 
         for mac, hinfo in sorted(subn[1].items(), key=lambda i: i[1]['name']):
-            self._render_host(hinfo['name'], mac, hinfo['ip'], outstream)
+            self._render_host(hinfo['name'],
+                              mac, hinfo['ip'],
+                              hinfo['desc'],
+                              outstream)
 
         outstream.write('}\n')
 
-    def _render_host(self, name, mac, ip, outstream):
+    def _render_host(self, name, mac, ip, desc, outstream):
+        sep = '  '
+        dsep = sep + sep
         outstream.write('\n'.join([
-            '\thost %s {' % name,
-            '\t\thardware ethernet %s;' % mac,
-            '\t\tfixed-address %s;' % ip,
-            '\t}\n']))
+            '%shost %s {' % (sep, name),
+            '%shardware ethernet %s;' % (dsep, mac),
+            '%sfixed-address %s;' % (dsep, ip),
+            '%sddns-hostname "%s";' % (dsep, name),
+            '%s#%s' % (dsep, desc.replace('\n', '\\n')),
+            '%s}\n' % sep]))
