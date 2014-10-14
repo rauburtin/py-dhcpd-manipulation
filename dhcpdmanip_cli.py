@@ -41,21 +41,25 @@ if __name__ == '__main__':
     manipulator = dhcpdmanip.Manipulator()
 
     def _render():
-        tmp = '/tmp/dhcpd.conf.render'
+        tmp = 'dhcpd.conf.render'
         with open(tmp, 'w') as f:
             manipulator.render(f)
         os.rename(tmp, manipulator._dhcpd_conf_file)
 
-    if action == 'add':
-        desc = getattr(object, 'desc', None)
-        manipulator.add(options.name, options.mac, options.ip, desc)
-        _render()
-    elif action == 'remove':
-        manipulator.remove(options.mac)
-        _render()
-    elif action == 'getleases':
-        json.dump(manipulator.get_leases(), sys.stdout, indent=2)
-    elif action == 'getreserved':
-        json.dump(manipulator.get_reserved(), sys.stdout, indent=2)
-    else:
-        parser.error('Bad action')
+    try:
+        if action == 'add':
+            desc = getattr(options, 'desc', None)
+            manipulator.add(options.name, options.mac, options.ip, desc)
+            _render()
+        elif action == 'remove':
+            manipulator.remove(options.mac)
+            _render()
+        elif action == 'getleases':
+            json.dump(manipulator.get_leases(), sys.stdout, indent=2)
+        elif action == 'getreserved':
+            json.dump(manipulator.get_reserved(), sys.stdout, indent=2)
+        else:
+            parser.error('Bad action')
+    except ValueError, e:
+        sys.stderr.write(e.message)
+        sys.exit(-1)
