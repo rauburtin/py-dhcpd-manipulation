@@ -3,8 +3,8 @@ import string
 
 
 def add(parsed, name, mac, ip, desc):
-    subnet = '.'.join(ip.split('.')[:3])
     mac = _normalize_mac(mac)
+    subnet = '.'.join(ip.split('.')[:3])
     try:
         if not _unique_mac(parsed, mac):
             raise ValueError('%s already in DB' % mac)
@@ -57,6 +57,7 @@ def _unique_ip(subnet, ip):
 
 
 def remove(parsed, mac):
+    nmac = _normalize_mac(mac)
     for sub in parsed.values():
-        if mac in sub['hosts']:
-            del(sub['hosts'][mac])
+        if nmac in sub['hosts']:
+            del(sub['hosts'][nmac])
