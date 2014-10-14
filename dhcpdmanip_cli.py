@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser.add_option('-H', '--host', action='store', dest='name',
                       help='host name',)
     parser.add_option('-d', '--desc', action='store', dest='desc',
-                      help='host name',)
+                      help='host description',)
     parser.set_usage(usage + parser.format_option_help())
 
     (options, args) = parser.parse_args()
