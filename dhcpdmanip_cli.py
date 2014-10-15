@@ -41,10 +41,9 @@ if __name__ == '__main__':
     manipulator = dhcpdmanip.Manipulator()
 
     def _render():
-        tmp = 'dhcpd.conf.render'
-        with open(tmp, 'w') as f:
-            manipulator.render(f)
-        os.rename(tmp, manipulator._dhcpd_conf_file)
+        backfile = manipulator._dhcpd_conf_file + '.manip.back'
+        os.rename(manipulator._dhcpd_conf_file, backfile)
+        manipulator.render()
 
     try:
         if action == 'add':
