@@ -1,1 +1,1 @@
-git+git://github.com/vencax/LeaseInfo
+git+git://github.com/rauburtin/LeaseInfo
